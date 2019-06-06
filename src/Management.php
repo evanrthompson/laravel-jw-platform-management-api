@@ -2,6 +2,7 @@
 
 namespace Webstarters\Platform;
 
+use function array_merge;
 use Webstarters\Exceptions\ManagementException;
 
 class Management
@@ -115,4 +116,33 @@ class Management
     public function post($url, $data = []) {
         return $this->call($url, $data, 'POST');
     }
+
+    public function create($video_source_url, $video_metadata = [], $tags = '') {
+        // do whatever it takes to attach a file from local temporary storage and send it to JWplayer
+
+        $video_data = [
+            'sourcetype'    => 'file', // url or file,
+            'download_url'    => $video_source_url,
+            'tags' => $tags
+        ];
+
+        $video_data = array_merge($video_data, $video_metadata);
+
+        return $this->call('/videos/create', $video_data, 'POST');
+    }
+
+    public function update($video_token, $video_metadata = [], $tags = '') {
+
+        $update_data = [
+            'video_key' => $video_token,
+            'title' => !empty($video_metadata['title']) ? $video_metadata['title'] : '',
+            'description' => !empty($video_metadata['description']) ? $video_metadata['description'] : '',
+            'author' => !empty($video_metadata['author']) ? $video_metadata['author'] : '',
+            'tags' => $tags
+        ];
+
+        return $this->call('/videos/update/', $update_data, 'POST');
+    }
+
+
 }
